@@ -13,8 +13,19 @@ SimpleEstimator::SimpleEstimator(std::shared_ptr<SimpleGraph> &g){
 
 void SimpleEstimator::prepare() {
 
-    // do your prep here
+    nrIn.resize(graph->getNoLabels());
+    nrPaths.resize(graph->getNoLabels());
+    nrOut.resize(graph->getNoLabels());
 
+    for (uint32_t i=0; i < graph->getNoLabels(); i++) {
+        nrPaths[i] = 0;
+    }
+    
+    for (uint32_t v=0; v < graph->adj.size(); v++) {
+        for (uint32_t w=0; w < graph->adj[v].size(); w++) {
+            nrPaths[graph->adj[v][w].first]++;
+        }
+    }
 }
 
 cardStat SimpleEstimator::estimate(RPQTree *q) {
