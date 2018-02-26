@@ -17,14 +17,25 @@ void SimpleEstimator::prepare() {
     nrPaths.resize(graph->getNoLabels());
     nrOut.resize(graph->getNoLabels());
 
+    std::vector<std::unordered_set<uint32_t>> nodesIn;
+    std::vector<std::unordered_set<uint32_t>> nodesOut;
+
     for (uint32_t i=0; i < graph->getNoLabels(); i++) {
         nrPaths[i] = 0;
     }
-    
+
     for (uint32_t v=0; v < graph->adj.size(); v++) {
         for (uint32_t w=0; w < graph->adj[v].size(); w++) {
-            nrPaths[graph->adj[v][w].first]++;
+            auto label = graph->adj[v][w].first;
+            nrPaths[label]++;
+            nodesOut[label].insert(v);
+            nodesIn[label].insert(w);
         }
+    }
+
+    for (uint32_t i=0; i < graph->getNoLabels(); i++) {
+        nrIn[i] = (uint32_t) nodesIn[i].size();
+        nrOut[i] = (uint32_t) nodesOut[i].size();
     }
 }
 
