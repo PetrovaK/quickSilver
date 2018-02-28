@@ -28,8 +28,14 @@ void SimpleEstimator::prepare() {
         for (uint32_t w=0; w < graph->adj[v].size(); w++) {
             auto label = graph->adj[v][w].first;
             nrPaths[label]++;
-            nodesOut[label].insert(v);
-            nodesIn[label].insert(w);
+            nodesIn[label].insert(graph->adj[v][w].second);
+        }
+    }
+
+    for (uint32_t w=0; w < graph->reverse_adj.size(); w++) {
+        for (uint32_t v=0; v < graph->reverse_adj[w].size(); v++) {
+            auto label = graph->reverse_adj[w][v].first;
+            nodesOut[label].insert(graph->reverse_adj[w][v].second);
         }
     }
 
