@@ -20,6 +20,9 @@ void SimpleEstimator::prepare() {
     std::vector<std::unordered_set<uint32_t>> nodesOut;
     std::vector<std::unordered_set<uint32_t>> nodesIn;
 
+    nodesOut.resize(graph->getNoLabels());
+    nodesIn.resize(graph->getNoLabels());
+
     for (uint32_t i=0; i < graph->getNoLabels(); i++) {
         nrPaths[i] = 0;
     }
@@ -28,14 +31,8 @@ void SimpleEstimator::prepare() {
         for (uint32_t w=0; w < graph->adj[v].size(); w++) {
             auto label = graph->adj[v][w].first;
             nrPaths[label]++;
+            nodesOut[label].insert(v);
             nodesIn[label].insert(graph->adj[v][w].second);
-        }
-    }
-
-    for (uint32_t w=0; w < graph->reverse_adj.size(); w++) {
-        for (uint32_t v=0; v < graph->reverse_adj[w].size(); v++) {
-            auto label = graph->reverse_adj[w][v].first;
-            nodesOut[label].insert(graph->reverse_adj[w][v].second);
         }
     }
 
@@ -46,6 +43,8 @@ void SimpleEstimator::prepare() {
 }
 
 cardStat SimpleEstimator::estimate(RPQTree *q) {
+    uint32_t noOut = 0;
+    uint32_t noIn = 0;
 
     // For noOut we check the first label of the query. Based on + or - we estimate noOut with nrOut or nrIn.
     auto firstNode = q;
@@ -53,7 +52,11 @@ cardStat SimpleEstimator::estimate(RPQTree *q) {
         firstNode = firstNode->left;
     }
     auto firstLabel = firstNode->data;
-    auto noOut = (uint32_t) stoi(firstLabel.substr(0,firstLabel.size()-1));
+    if (firstLabel.substr(firstLabel.size()-1, firstLabel.size()) == "+"){
+        noOut = nrOut[stoi(firstLabel.substr(0,firstLabel.size()-1))];
+    } else {
+        noOut = nrIn[stoi(firstLabel.substr(0,firstLabel.size()-1))];
+    }
 
     // For noIn we check the last label of the query. We make an estimate in a similar way to noOut.
     auto lastNode = q;
@@ -61,7 +64,11 @@ cardStat SimpleEstimator::estimate(RPQTree *q) {
         lastNode = lastNode->right;
     }
     auto lastLabel = lastNode->data;
-    auto noIn = (uint32_t) stoi(lastLabel.substr(0,lastLabel.size()-1));
+    if (lastLabel.substr(lastLabel.size()-1,lastLabel.size()) == "+") {
+        noIn = nrIn[stoi(lastLabel.substr(0,lastLabel.size()-1))];
+    } else {
+        noIn = nrOut[stoi(lastLabel.substr(0,lastLabel.size()-1))];
+    }
 
     // For noPaths we for now estimate noOut * noIn
     auto noPaths = noOut * noIn;
