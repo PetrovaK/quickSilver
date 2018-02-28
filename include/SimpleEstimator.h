@@ -12,9 +12,9 @@ class SimpleEstimator : public Estimator {
 
     std::shared_ptr<SimpleGraph> graph;
 
-    std::vector<uint32_t> nrIn;
-    std::vector<uint32_t> nrPaths;
     std::vector<uint32_t> nrOut;
+    std::vector<uint32_t> nrPaths;
+    std::vector<uint32_t> nrIn;
 
 public:
     explicit SimpleEstimator(std::shared_ptr<SimpleGraph> &g);
