@@ -25,6 +25,7 @@ public:
 
     void prepare() override ;
     cardStat estimate(RPQTree *q) override ;
+    cardStat join(RPQTree *q);
 
 };
 
