@@ -16,9 +16,6 @@ void SimpleEstimator::prepare() {
     nrPaths.resize(graph->getNoLabels());
     nrIn.resize(graph->getNoLabels());
 
-    std::vector<std::unordered_set<uint32_t>> nodesOut;
-    std::vector<std::unordered_set<uint32_t>> nodesIn;
-
     nodesOut.resize(graph->getNoLabels());
     nodesIn.resize(graph->getNoLabels());
 
@@ -44,6 +41,34 @@ void SimpleEstimator::prepare() {
 cardStat SimpleEstimator::estimate(RPQTree *q) {
     uint32_t noOut = 0;
     uint32_t noIn = 0;
+    uint32_t noPaths = 0;
+
+    if(!q->isLeaf()){
+        cardStat leftCard = estimate(q->left);
+        cardStat rightCard = estimate(q->right);
+        //Tr - nrOut for left and Ts - nrIn for right side
+        //V(R,Y) - nr distinct outgoing paths from left
+        //V(S,Y) - nr distinct incoming paths to right
+        uint32_t v = std::max(leftCard.noOut, rightCard.noIn);
+        noPaths = (leftCard.noPaths * rightCard.noPaths)/v;
+        noIn = leftCard.noIn;
+        noOut = rightCard.noOut;
+        return cardStat {noOut, noPaths, noIn};
+    }
+    else{
+        //find for label
+        auto label = q->data;
+        auto actLabel = stoi(label.substr(0,label.size()-1));
+        if (label.substr(label.size()-1, label.size()) == "+"){
+            noOut = nrOut[actLabel];
+            noIn = nrIn[actLabel];
+        } else {
+            noOut = nrIn[actLabel];
+            noIn = nrOut[actLabel];
+        }
+        noPaths = nrPaths[actLabel];
+        return cardStat {noOut, noPaths, noIn};
+    }
 
     // For noOut we check the first label of the query. Based on + or - we estimate noOut with nrOut or nrIn.
     auto firstNode = q;
@@ -70,7 +95,7 @@ cardStat SimpleEstimator::estimate(RPQTree *q) {
     }
 
     // For noPaths we for now estimate noOut * noIn
-    auto noPaths = noOut * noIn;
+    noPaths = noOut * noIn;
 
     return cardStat {noOut, noPaths, noIn};
 }

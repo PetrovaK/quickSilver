@@ -16,6 +16,9 @@ class SimpleEstimator : public Estimator {
     std::vector<uint32_t> nrPaths;
     std::vector<uint32_t> nrIn;
 
+    std::vector<std::unordered_set<uint32_t>> nodesOut;
+    std::vector<std::unordered_set<uint32_t>> nodesIn;
+
 public:
     explicit SimpleEstimator(std::shared_ptr<SimpleGraph> &g);
     ~SimpleEstimator() = default;
