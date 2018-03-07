@@ -12,7 +12,6 @@ SimpleEstimator::SimpleEstimator(std::shared_ptr<SimpleGraph> &g){
 }
 
 void SimpleEstimator::prepare() {
-
     nrOut.resize(graph->getNoLabels());
     nrPaths.resize(graph->getNoLabels());
     nrIn.resize(graph->getNoLabels());
