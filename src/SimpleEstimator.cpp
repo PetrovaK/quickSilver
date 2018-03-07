@@ -78,8 +78,8 @@ cardStat SimpleEstimator::join(RPQTree *q){
     uint32_t noPaths = 0;
 
     if(!q->isLeaf()){
-        cardStat leftCard = estimate(q->left);
-        cardStat rightCard = estimate(q->right);
+        cardStat leftCard = join(q->left);
+        cardStat rightCard = join(q->right);
         //Tr - nrOut for left and Ts - nrIn for right side
         //V(R,Y) - nr distinct outgoing paths from left
         //V(S,Y) - nr distinct incoming paths to right
