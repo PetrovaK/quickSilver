@@ -14,9 +14,7 @@
 #include "Graph.h"
 
 class SimpleEvaluator : public Evaluator {
-
     std::shared_ptr<SimpleGraph> graph;
-    std::shared_ptr<SimpleEstimator> est;
 
 public:
 
@@ -25,8 +23,6 @@ public:
 
     void prepare() override ;
     cardStat evaluate(RPQTree *query) override ;
-
-    void attachEstimator(std::shared_ptr<SimpleEstimator> &e);
 
     std::shared_ptr<SimpleGraph> evaluate_aux(RPQTree *q);
     static std::shared_ptr<SimpleGraph> project(uint32_t label, bool inverse, std::shared_ptr<SimpleGraph> &g);
