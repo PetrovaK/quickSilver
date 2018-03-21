@@ -85,8 +85,8 @@ cardStat SimpleEstimator::join(RPQTree *q){
         //V(S,Y) - nr distinct incoming paths to right
         uint32_t v = std::max(leftCard.noIn, rightCard.noOut);
         noPaths = (leftCard.noPaths * rightCard.noPaths)/v;
-        noOut = leftCard.noIn;
-        noIn = rightCard.noOut;
+        noOut = leftCard.noOut;
+        noIn = rightCard.noIn;
         return cardStat {noOut, noPaths, noIn};
     }
     else{
