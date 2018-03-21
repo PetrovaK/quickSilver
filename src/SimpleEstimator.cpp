@@ -45,7 +45,7 @@ cardStat SimpleEstimator::estimate(RPQTree *q) {
     uint32_t noIn = 0;
 
     // For noOut we check the first label of the query. Based on + or - we estimate noOut with nrOut or nrIn.
-    /*auto firstNode = q;
+    auto firstNode = q;
     while (!firstNode->isLeaf()) {
         firstNode = firstNode->left;
     }
@@ -66,10 +66,10 @@ cardStat SimpleEstimator::estimate(RPQTree *q) {
         noIn = nrIn[stoi(lastLabel.substr(0,lastLabel.size()-1))];
     } else {
         noIn = nrOut[stoi(lastLabel.substr(0,lastLabel.size()-1))];
-    }*/
+    }
 
 
-    return cardStat {tree.noOut, tree.noPaths, tree.noIn};
+    return cardStat {noOut, tree.noPaths, noIn};
 }
 
 cardStat SimpleEstimator::join(RPQTree *q){
@@ -85,8 +85,8 @@ cardStat SimpleEstimator::join(RPQTree *q){
         //V(S,Y) - nr distinct incoming paths to right
         uint32_t v = std::max(leftCard.noIn, rightCard.noOut);
         noPaths = (leftCard.noPaths * rightCard.noPaths)/v;
-        noOut = leftCard.noOut;
-        noIn = rightCard.noIn;
+        noOut = leftCard.noIn;
+        noIn = rightCard.noOut;
         return cardStat {noOut, noPaths, noIn};
     }
     else{
