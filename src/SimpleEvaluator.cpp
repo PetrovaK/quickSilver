@@ -141,6 +141,22 @@ std::shared_ptr<SimpleGraph> SimpleEvaluator::evaluate_aux(RPQTree *q) {
 }
 
 cardStat SimpleEvaluator::evaluate(RPQTree *query) {
+    auto node = query;
+    auto parent = query;
+    while (!node->isLeaf()){
+        if (!node->right->isLeaf()) {
+            auto rightnode = node->right;
+            node->right = rightnode->left;
+            rightnode->left = node;
+            if (parent != query) {
+                parent->left = rightnode;
+            }
+            node = rightnode;
+        } else {
+            node = node->left;
+            parent = node;
+        }
+    }
     auto res = evaluate_aux(query);
     return SimpleEvaluator::computeStats(res);
 }
