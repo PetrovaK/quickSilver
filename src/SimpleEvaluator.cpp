@@ -140,23 +140,16 @@ std::shared_ptr<SimpleGraph> SimpleEvaluator::evaluate_aux(RPQTree *q) {
     return nullptr;
 }
 
+std::string RPQTreeToString(RPQTree *query) {
+    if (query->isLeaf()) {
+        return query->data;
+    }
+    return RPQTreeToString(query->left) + query->data + RPQTreeToString(query->right);
+}
+
 cardStat SimpleEvaluator::evaluate(RPQTree *query) {
-//    auto node = query;
-//    auto parent = query;
-//    while (!node->isLeaf()){
-//        if (!node->right->isLeaf()) {
-//            auto rightnode = node->right;
-//            node->right = rightnode->left;
-//            rightnode->left = node;
-//            if (parent != query) {
-//                parent->left = rightnode;
-//            }
-//            node = rightnode;
-//        } else {
-//            node = node->left;
-//            parent = node;
-//        }
-//    }
-    auto res = evaluate_aux(query);
+    auto querystring = RPQTreeToString(query);
+    RPQTree *new_query = RPQTree::strToTree(querystring);
+    auto res = evaluate_aux(new_query);
     return SimpleEvaluator::computeStats(res);
 }
