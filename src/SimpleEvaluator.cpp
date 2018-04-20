@@ -149,20 +149,20 @@ std::string RPQTreeToString(RPQTree *query) {
 
 std::shared_ptr<RPQTree> optimize_greedy(RPQTree *query) {
     // Parse query to useful data structure (ordered set?)
-    auto nodes = [];
-    
+    std::map<uint32_t, std::string> nodes;
+
     // While there is more then one node remaining, there is still at least one join to be made
-    while (node.size() > 1) {
+    while (nodes.size() > 1) {
         // Find the cheapest join that is currently possible
         uint32_t cheapest_join;
         std::string join_string = "";
         uint32_t join_cost = UINT32_MAX;
-        for (uint32_t i=0; i < nodes.size()-1; i++) {
-            std::string querystring = "(" + nodes.get(i) + "/" + nodes.get(i+1) + ")";
+        for (auto it = nodes.begin(); it != nodes.end()-1; it++) {
+            std::string querystring = "(" + it->second + "/" + (it+1)->second + ")";
             auto estimate = est.estimate(RPQTree::strToTree(querystring));
             if (estimate.noPaths < join_cost) {
                 join_cost = estimate.noPaths;
-                cheapest_join = i;
+                cheapest_join = it;
                 join_string = querystring;
             }
         }
@@ -170,6 +170,7 @@ std::shared_ptr<RPQTree> optimize_greedy(RPQTree *query) {
         // Remove the chosen join from the set and add the joined node
         nodes.remove(cheapest_join+1);
         nodes.remove(cheapest_join);
+        nodes.insert()
         nodes.add(cheapest_join, join_string);
     }
 
