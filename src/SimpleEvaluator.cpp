@@ -147,6 +147,36 @@ std::string RPQTreeToString(RPQTree *query) {
     return RPQTreeToString(query->left) + query->data + RPQTreeToString(query->right);
 }
 
+std::shared_ptr<RPQTree> optimize_greedy(RPQTree *query) {
+    // Parse query to useful data structure (ordered set?)
+    auto nodes = [];
+    
+    // While there is more then one node remaining, there is still at least one join to be made
+    while (node.size() > 1) {
+        // Find the cheapest join that is currently possible
+        uint32_t cheapest_join;
+        std::string join_string = "";
+        uint32_t join_cost = UINT32_MAX;
+        for (uint32_t i=0; i < nodes.size()-1; i++) {
+            std::string querystring = "(" + nodes.get(i) + "/" + nodes.get(i+1) + ")";
+            auto estimate = est.estimate(RPQTree::strToTree(querystring));
+            if (estimate.noPaths < join_cost) {
+                join_cost = estimate.noPaths;
+                cheapest_join = i;
+                join_string = querystring;
+            }
+        }
+
+        // Remove the chosen join from the set and add the joined node
+        nodes.remove(cheapest_join+1);
+        nodes.remove(cheapest_join);
+        nodes.add(cheapest_join, join_string);
+    }
+
+    // When done, return the new query
+    return RPQTree::strToTree(nodes.get(0));
+}
+
 cardStat SimpleEvaluator::evaluate(RPQTree *query) {
     auto querystring = RPQTreeToString(query);
     RPQTree *new_query = RPQTree::strToTree(querystring);
